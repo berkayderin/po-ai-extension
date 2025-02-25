@@ -1,0 +1,23 @@
+{
+	"manifest_version": 3,
+	"name": "Azure DevOps AC Generator",
+	"version": "1.0",
+	"description": "Azure DevOps kartlarından Acceptance Criteria oluşturan modern extension",
+	"permissions": ["storage", "activeTab"],
+	"content_security_policy": {
+		"extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+	},
+	"icons": {
+		"16": "images/icon16.png",
+		"48": "images/icon48.png",
+		"128": "images/icon128.png"
+	},
+	"action": {
+		"default_popup": "popup.html",
+		"default_icon": {
+			"16": "images/icon16.png",
+			"48": "images/icon48.png",
+			"128": "images/icon128.png"
+		}
+	}
+}

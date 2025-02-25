@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Arka plan gradyanı -->
+  <defs>
+    <linearGradient id="backgroundGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0078D4" />
+      <stop offset="100%" stop-color="#004E8C" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Ana arka plan dairesi -->
+  <circle cx="64" cy="64" r="60" fill="url(#backgroundGradient)" filter="url(#shadow)" />
+  
+  <!-- Beyin/Yapay Zeka Ağı Sembolü -->
+  <g fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Beyin dış hatları -->
+    <path d="M64 38C52 38 42 48 42 60C42 72 52 82 64 82C76 82 86 72 86 60C86 48 76 38 64 38Z" stroke-width="3" />
+    
+    <!-- Nöron bağlantıları -->
+    <circle cx="64" cy="60" r="4" fill="white" />
+    <circle cx="48" cy="50" r="3" fill="white" />
+    <circle cx="80" cy="50" r="3" fill="white" />
+    <circle cx="48" cy="70" r="3" fill="white" />
+    <circle cx="80" cy="70" r="3" fill="white" />
+    <circle cx="64" cy="44" r="3" fill="white" />
+    <circle cx="64" cy="76" r="3" fill="white" />
+    
+    <!-- Bağlantı çizgileri -->
+    <line x1="64" y1="60" x2="48" y2="50" />
+    <line x1="64" y1="60" x2="80" y2="50" />
+    <line x1="64" y1="60" x2="48" y2="70" />
+    <line x1="64" y1="60" x2="80" y2="70" />
+    <line x1="64" y1="60" x2="64" y2="44" />
+    <line x1="64" y1="60" x2="64" y2="76" />
+    <line x1="48" y1="50" x2="48" y2="70" />
+    <line x1="80" y1="50" x2="80" y2="70" />
+  </g>
+  
+  <!-- AC Metni -->
+  <text x="64" y="105" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">AC GEN</text>
+  
+  <!-- Dış halka -->
+  <circle cx="64" cy="64" r="60" stroke="white" stroke-width="2" stroke-opacity="0.3" fill="none" />
+</svg> 
