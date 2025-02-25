@@ -354,6 +354,7 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				gap: 8px;
 			}
 
 			.preview-title {
@@ -364,6 +365,8 @@
 				display: flex;
 				align-items: center;
 				gap: 8px;
+				flex: 1;
+				min-width: 0;
 			}
 
 			.preview-title::before {
@@ -380,17 +383,15 @@
 			.copy-button {
 				background: rgba(255, 255, 255, 0.1);
 				border: 1px solid var(--border-color);
-				padding: 6px 12px;
+				padding: 0;
 				cursor: pointer;
 				color: var(--text-color);
-				border-radius: 6px;
-				display: inline-flex;
+				border-radius: 4px;
+				display: flex;
 				align-items: center;
 				justify-content: center;
-				gap: 6px;
-				font-size: 12px;
-				font-weight: 500;
-				height: 30px;
+				width: 28px;
+				height: 28px;
 				transition: all 0.2s ease;
 			}
 
@@ -401,17 +402,6 @@
 			.copy-button .icon {
 				width: 14px;
 				height: 14px;
-			}
-
-			.copy-button span:last-child {
-				margin-top: 1px;
-			}
-
-			.icon-copy {
-				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>');
-				background-repeat: no-repeat;
-				background-position: center;
-				background-size: contain;
 			}
 
 			.preview-content {
@@ -459,6 +449,13 @@
 
 			.icon-check {
 				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%234cd964" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>');
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: contain;
+			}
+
+			.icon-copy {
+				background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>');
 				background-repeat: no-repeat;
 				background-position: center;
 				background-size: contain;
@@ -618,16 +615,13 @@
 
 					<div class="preview-container" id="previewContainer">
 						<div class="preview-header">
-							<div class="preview-title">
-								Oluşturulan Acceptance Criteria
-							</div>
+							<div class="preview-title">Cevap</div>
 							<button
 								id="copyButton"
 								class="copy-button"
 								title="Kopyala"
 							>
 								<span class="icon icon-copy"></span>
-								<span>Kopyala</span>
 							</button>
 						</div>
 						<div class="preview-content" id="previewContent"></div>
@@ -659,6 +653,27 @@
 							placeholder="API anahtarınızı girin"
 							spellcheck="false"
 						/>
+					</div>
+					<div class="field-group">
+						<label for="promptTemplate">
+							<span class="icon icon-description"></span> Prompt
+							Template
+							<div class="tooltip">
+								<span class="tooltip-icon">?</span>
+								<span class="tooltip-text">
+									Özel prompt template'inizi buraya girin.
+								</span>
+							</div>
+						</label>
+						<textarea
+							id="promptTemplate"
+							placeholder="Örnek: Aşağıdaki kriterleri de ekle:
+- Edge case'leri belirt
+- Performans kriterlerini ekle
+- Güvenlik gereksinimlerini belirt"
+							spellcheck="false"
+							rows="4"
+						></textarea>
 					</div>
 					<div class="button-group">
 						<button id="saveSettings" class="secondary">

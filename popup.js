@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function () {
 	const apiKeyInput = document.getElementById('apiKey')
 	const descriptionInput = document.getElementById('description')
+	const promptTemplateInput =
+		document.getElementById('promptTemplate')
 	const generateACButton = document.getElementById('generateAC')
 	const statusDiv = document.getElementById('status')
 	const previewContainer = document.getElementById('previewContainer')
@@ -9,6 +11,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 	const tabs = document.querySelectorAll('.tab')
 	const tabContents = document.querySelectorAll('.tab-content')
 	const saveSettingsButton = document.getElementById('saveSettings')
+
+	const DEFAULT_PROMPT_TEMPLATE = `Bu Azure DevOps iş öğesi açıklamasından Türkçe Acceptance Criteria oluştur. Maddeler halinde, anlaşılır ve test edilebilir kriterler olmalı. 
+Açıklamaya göre request, response, endpoint URL'sini oluştur ve ingilizce yap.
+
+Açıklama: {description}`
 
 	let generatedAC = null
 	let isGenerating = false
@@ -32,9 +39,15 @@ document.addEventListener('DOMContentLoaded', async function () {
 	})
 
 	try {
-		const data = await chrome.storage.sync.get('geminiApiKey')
+		const data = await chrome.storage.sync.get([
+			'geminiApiKey',
+			'promptTemplate'
+		])
 		if (data.geminiApiKey) {
 			apiKeyInput.value = data.geminiApiKey
+		}
+		if (data.promptTemplate) {
+			promptTemplateInput.value = data.promptTemplate
 		}
 	} catch (error) {
 		console.error('Storage erişim hatası:', error)
@@ -88,6 +101,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 	function validateInputs() {
 		const apiKey = apiKeyInput.value.trim()
 		const description = descriptionInput.value.trim()
+		const promptTemplate = promptTemplateInput.value.trim()
 
 		if (!apiKey) {
 			showStatus('Lütfen API anahtarınızı girin', 'error')
@@ -111,11 +125,18 @@ document.addEventListener('DOMContentLoaded', async function () {
 			return false
 		}
 
+		if (!promptTemplate) {
+			showStatus('Lütfen prompt template giriniz', 'error')
+			promptTemplateInput.focus()
+			return false
+		}
+
 		return true
 	}
 
 	saveSettingsButton.addEventListener('click', async () => {
 		const apiKey = apiKeyInput.value.trim()
+		const promptTemplate = promptTemplateInput.value.trim()
 
 		if (!apiKey) {
 			showStatus('Lütfen API anahtarınızı girin', 'error')
@@ -123,8 +144,17 @@ document.addEventListener('DOMContentLoaded', async function () {
 			return
 		}
 
+		if (!promptTemplate) {
+			showStatus('Lütfen prompt template giriniz', 'error')
+			promptTemplateInput.focus()
+			return
+		}
+
 		try {
-			await chrome.storage.sync.set({ geminiApiKey: apiKey })
+			await chrome.storage.sync.set({
+				geminiApiKey: apiKey,
+				promptTemplate: promptTemplate
+			})
 			showStatus('Ayarlar başarıyla kaydedildi!', 'success')
 
 			// Otomatik olarak oluşturucu sekmesine geç
@@ -151,6 +181,21 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 		const apiKey = apiKeyInput.value.trim()
 		const description = descriptionInput.value.trim()
+		let customTemplate =
+			(await chrome.storage.sync.get('promptTemplate'))
+				.promptTemplate || ''
+
+		const prompt = `Bu Azure DevOps iş öğesi açıklamasından Türkçe Acceptance Criteria oluştur. Maddeler halinde, anlaşılır ve test edilebilir kriterler olmalı. 
+		Açıklamaya göre request, response, endpoint URL'sini oluştur ve ingilizce olsun fakat ingilizce olduğunu belirtme.
+
+		Açıklama: ${description}
+
+		${
+			customTemplate
+				? `Aşağıdaki ek kriterleri de response'un en sonunda yer alsın ve madde madde olsun. Not şeklinde yazılmasın. Kesinlikle madde madde yazılması gerekiyor. :
+		${customTemplate}`
+				: ''
+		}`
 
 		togglePreview(false)
 		generatedAC = null
@@ -165,11 +210,6 @@ document.addEventListener('DOMContentLoaded', async function () {
 		showStatus('Acceptance Criteria oluşturuluyor...', 'success')
 
 		try {
-			const prompt = `Bu Azure DevOps iş öğesi açıklamasından Türkçe Acceptance Criteria oluştur. Maddeler halinde, anlaşılır ve test edilebilir kriterler olmalı. 
-			Açıklamaya göre request, response, endpoint URL'sini oluştur ve ingilizce yap.
-			
-			Açıklama: ${description}`
-
 			const geminiResponse = await fetch(
 				`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
 				{
