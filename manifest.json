@@ -3,7 +3,11 @@
 	"name": "Azure DevOps Agent",
 	"version": "2.0",
 	"description": "Azure DevOps kartlarından Acceptance Criteria oluşturan modern extension.",
-	"permissions": ["storage", "activeTab"],
+	"permissions": ["storage"],
+	"host_permissions": [
+		"https://*.visualstudio.com/*",
+		"https://dev.azure.com/*"
+	],
 	"content_security_policy": {
 		"extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
 	},
@@ -21,5 +25,9 @@
 		}
 	},
 	"author": "Berkay Derin",
-	"homepage_url": "https://github.com/berkayderin/po-ai-extension"
+	"homepage_url": "https://github.com/berkayderin/po-ai-extension",
+	"developer": {
+		"name": "Berkay Derin",
+		"email": "derinberkay67@gmail.com"
+	}
 }
