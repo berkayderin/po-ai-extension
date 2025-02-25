@@ -1,11 +1,11 @@
 {
 	"manifest_version": 3,
-	"name": "Azure DevOps AC Generator",
+	"name": "Azure DevOps Agent",
 	"version": "2.0",
-	"description": "Azure DevOps kartlarından Acceptance Criteria oluşturan modern extension",
+	"description": "Azure DevOps kartlarından Acceptance Criteria oluşturan modern extension.",
 	"permissions": ["storage", "activeTab"],
 	"content_security_policy": {
-		"extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+		"extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
 	},
 	"icons": {
 		"16": "images/icon16.png",
@@ -19,5 +19,7 @@
 			"48": "images/icon48.png",
 			"128": "images/icon128.png"
 		}
-	}
+	},
+	"author": "Berkay Derin",
+	"homepage_url": "https://github.com/berkayderin/po-ai-extension"
 }
