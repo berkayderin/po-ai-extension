@@ -21,7 +21,13 @@ Son güncelleme / Last updated: 25.02.2025
 #### İzinler
 
 - `storage`: Kullanıcı tercihlerini yerel olarak saklamak için
-- `host_permissions`: Sadece Azure DevOps servislerine erişim için (`https://*.visualstudio.com/*`, `https://dev.azure.com/*`)
+- `activeTab`: Kullanıcının aktif Azure DevOps sekmesindeki iş öğesi açıklamalarına erişmek için
+- `host_permissions`: Azure DevOps platformlarına erişim için gereklidir:
+  - `https://*.visualstudio.com/*`: Azure DevOps'un eski domain'i üzerinden erişilen projelerde çalışabilmek için
+  - `https://dev.azure.com/*`: Azure DevOps'un yeni domain'i üzerinden erişilen projelerde çalışabilmek için
+  - Bu izinler SADECE Azure DevOps platformlarında çalışır ve SADECE iş öğesi açıklamalarına erişim için kullanılır
+  - Eklenti bu domain'ler dışında hiçbir web sitesine erişim sağlamaz
+  - Bu izinler olmadan eklentinin Azure DevOps iş öğelerine erişmesi ve Acceptance Criteria oluşturması mümkün değildir
 
 #### İletişim
 
@@ -45,7 +51,13 @@ Email: derinberkay67@gmail.com
 #### Permissions
 
 - `storage`: For storing user preferences locally
-- `host_permissions`: Only for accessing Azure DevOps services (`https://*.visualstudio.com/*`, `https://dev.azure.com/*`)
+- `activeTab`: To access work item descriptions in the user's active Azure DevOps tab
+- `host_permissions`: Required for Azure DevOps platform access:
+  - `https://*.visualstudio.com/*`: To work with projects accessed through Azure DevOps' legacy domain
+  - `https://dev.azure.com/*`: To work with projects accessed through Azure DevOps' new domain
+  - These permissions ONLY work on Azure DevOps platforms and are ONLY used to access work item descriptions
+  - The extension does not access any websites outside these domains
+  - Without these permissions, the extension cannot access Azure DevOps work items and generate Acceptance Criteria
 
 #### Contact
 
