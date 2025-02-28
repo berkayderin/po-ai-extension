@@ -3,7 +3,7 @@
 	"name": "Azure DevOps Agent",
 	"version": "2.0",
 	"description": "Azure DevOps kartlarından Acceptance Criteria oluşturan modern extension.",
-	"permissions": ["storage"],
+	"permissions": ["storage", "activeTab"],
 	"host_permissions": [
 		"https://*.visualstudio.com/*",
 		"https://dev.azure.com/*"
