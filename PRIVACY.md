@@ -21,7 +21,6 @@ Son güncelleme / Last updated: 25.02.2025
 #### İzinler
 
 - `storage`: Kullanıcı tercihlerini yerel olarak saklamak için
-- `activeTab`: Kullanıcının aktif Azure DevOps sekmesindeki iş öğesi açıklamalarına erişmek için
 - `host_permissions`: Azure DevOps platformlarına erişim için gereklidir:
   - `https://*.visualstudio.com/*`: Azure DevOps'un eski domain'i üzerinden erişilen projelerde çalışabilmek için
   - `https://dev.azure.com/*`: Azure DevOps'un yeni domain'i üzerinden erişilen projelerde çalışabilmek için
@@ -51,7 +50,6 @@ Email: derinberkay67@gmail.com
 #### Permissions
 
 - `storage`: For storing user preferences locally
-- `activeTab`: To access work item descriptions in the user's active Azure DevOps tab
 - `host_permissions`: Required for Azure DevOps platform access:
   - `https://*.visualstudio.com/*`: To work with projects accessed through Azure DevOps' legacy domain
   - `https://dev.azure.com/*`: To work with projects accessed through Azure DevOps' new domain
