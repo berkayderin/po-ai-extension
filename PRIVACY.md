@@ -2,7 +2,7 @@
 
 ## Azure DevOps Agent Chrome Uzantısı / Chrome Extension
 
-Son güncelleme / Last updated: 25.02.2025
+Son güncelleme / Last updated: 04.03.2025
 
 ### 🇹🇷 Türkçe
 
