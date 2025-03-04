@@ -20,14 +20,11 @@ Açıklama: {description}`
 	let generatedAC = null
 	let isGenerating = false
 
-	// Sekme yapısını ayarla
 	tabs.forEach((tab) => {
 		tab.addEventListener('click', () => {
-			// Aktif sekmeyi değiştir
 			tabs.forEach((t) => t.classList.remove('active'))
 			tab.classList.add('active')
 
-			// İlgili içeriği göster
 			const tabName = tab.getAttribute('data-tab')
 			tabContents.forEach((content) => {
 				content.classList.remove('active')
@@ -48,20 +45,21 @@ Açıklama: {description}`
 		}
 		if (data.promptTemplate) {
 			promptTemplateInput.value = data.promptTemplate
+		} else {
+			promptTemplateInput.value = DEFAULT_PROMPT_TEMPLATE
 		}
 	} catch (error) {
-		console.error('Storage erişim hatası:', error)
+		console.error('Ayarlar yüklenirken hata:', error)
 	}
 
-	function showStatus(message, type) {
+	function showStatus(message, type = 'info') {
 		statusDiv.textContent = message
 		statusDiv.className = `status ${type}`
+		statusDiv.style.display = 'block'
 
-		if (type === 'success') {
-			setTimeout(() => {
-				statusDiv.className = 'status'
-			}, 4000)
-		}
+		setTimeout(() => {
+			statusDiv.style.display = 'none'
+		}, 5000)
 	}
 
 	function togglePreview(show, content = '') {
@@ -139,79 +137,63 @@ Açıklama: {description}`
 		const promptTemplate = promptTemplateInput.value.trim()
 
 		if (!apiKey) {
-			showStatus('Lütfen API anahtarınızı girin', 'error')
-			apiKeyInput.focus()
-			return
-		}
-
-		if (!promptTemplate) {
-			showStatus('Lütfen prompt template giriniz', 'error')
-			promptTemplateInput.focus()
+			showStatus('Lütfen bir API anahtarı girin.', 'error')
 			return
 		}
 
 		try {
 			await chrome.storage.sync.set({
 				geminiApiKey: apiKey,
-				promptTemplate: promptTemplate
+				promptTemplate: promptTemplate || DEFAULT_PROMPT_TEMPLATE
 			})
-			showStatus('Ayarlar başarıyla kaydedildi!', 'success')
-
-			// Otomatik olarak oluşturucu sekmesine geç
-			setTimeout(() => {
-				tabs.forEach((t) => t.classList.remove('active'))
-				document
-					.querySelector('[data-tab="generator"]')
-					.classList.add('active')
-				tabContents.forEach((content) => {
-					content.classList.remove('active')
-				})
-				document
-					.getElementById('generator-content')
-					.classList.add('active')
-			}, 1500)
+			showStatus('Ayarlar kaydedildi!', 'success')
 		} catch (error) {
-			console.error('Storage kayıt hatası:', error)
-			showStatus('Ayarlar kaydedilirken hata oluştu', 'error')
+			console.error('Ayarlar kaydedilirken hata:', error)
+			showStatus('Ayarlar kaydedilirken bir hata oluştu.', 'error')
 		}
 	})
 
 	generateACButton.addEventListener('click', async () => {
-		if (!validateInputs()) return
+		if (isGenerating) return
 
-		const apiKey = apiKeyInput.value.trim()
 		const description = descriptionInput.value.trim()
-		let customTemplate =
-			(await chrome.storage.sync.get('promptTemplate'))
-				.promptTemplate || ''
-
-		const prompt = `Bu Azure DevOps iş öğesi açıklamasından Türkçe Acceptance Criteria oluştur. Maddeler halinde, anlaşılır ve test edilebilir kriterler olmalı. 
-		Açıklamaya göre request, response, endpoint URL'sini oluştur ve ingilizce olsun fakat ingilizce olduğunu belirtme.
-
-		Açıklama: ${description}
-
-		${
-			customTemplate
-				? `Aşağıdaki ek kriterleri de response'un en sonunda yer alsın ve madde madde olsun. Not şeklinde yazılmasın. Kesinlikle madde madde yazılması gerekiyor. :
-		${customTemplate}`
-				: ''
-		}`
-
-		togglePreview(false)
-		generatedAC = null
-
-		try {
-			await chrome.storage.sync.set({ geminiApiKey: apiKey })
-		} catch (error) {
-			console.error('Storage kayıt hatası:', error)
+		if (!description) {
+			showStatus('Lütfen bir açıklama girin.', 'error')
+			return
 		}
 
-		updateButtonState(true)
-		showStatus('Acceptance Criteria oluşturuluyor...', 'success')
-
 		try {
-			const geminiResponse = await fetch(
-				`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+			const data = await chrome.storage.sync.get('geminiApiKey')
+			const apiKey = data.geminiApiKey
+
+			if (!apiKey) {
+				showStatus(
+					'API anahtarı bulunamadı. Lütfen ayarlar sekmesinden bir API anahtarı girin.',
+					'error'
+				)
+				tabs[1].click()
+				return
+			}
+
+			isGenerating = true
+			generateACButton.disabled = true
+			generateACButton.innerHTML =
+				'<span class="spinner"></span> Oluşturuluyor...'
+			showStatus('Acceptance Criteria oluşturuluyor...', 'info')
+
+			const promptTemplateData = await chrome.storage.sync.get(
+				'promptTemplate'
+			)
+			let promptTemplate =
+				promptTemplateData.promptTemplate || DEFAULT_PROMPT_TEMPLATE
+
+			const prompt = promptTemplate.replace(
+				'{description}',
+				description
+			)
+
+			const response = await fetch(
+				`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
 				{
 					method: 'POST',
 					headers: {
@@ -220,74 +202,85 @@ Açıklama: {description}`
 					body: JSON.stringify({
 						contents: [
 							{
-								parts: [{ text: prompt }]
+								parts: [
+									{
+										text: prompt
+									}
+								]
 							}
-						]
+						],
+						generationConfig: {
+							temperature: 0.7,
+							topK: 40,
+							topP: 0.95,
+							maxOutputTokens: 2048
+						}
 					})
 				}
 			)
 
-			const data = await geminiResponse.json()
+			const data2 = await response.json()
+
 			if (
-				data.candidates &&
-				data.candidates[0].content.parts[0].text
+				!data2.candidates ||
+				!data2.candidates[0] ||
+				!data2.candidates[0].content ||
+				!data2.candidates[0].content.parts ||
+				!data2.candidates[0].content.parts[0] ||
+				!data2.candidates[0].content.parts[0].text
 			) {
-				generatedAC = data.candidates[0].content.parts[0].text
-				togglePreview(true, generatedAC)
-				showStatus(
-					'Acceptance Criteria başarıyla oluşturuldu!',
-					'success'
+				throw new Error(
+					'API yanıtı beklenen formatta değil: ' +
+						JSON.stringify(data2)
 				)
-			} else {
-				throw new Error(data.error?.message || 'API yanıtı geçersiz')
 			}
+
+			generatedAC = data2.candidates[0].content.parts[0].text
+			previewContent.innerHTML = formatACText(generatedAC)
+			previewContainer.style.display = 'block'
+			showStatus('Acceptance Criteria oluşturuldu!', 'success')
 		} catch (error) {
-			console.error('API Hatası:', error)
-			showStatus(`Hata oluştu: ${error.message}`, 'error')
-			togglePreview(false)
+			console.error('AC oluşturulurken hata:', error)
+			showStatus(
+				'Acceptance Criteria oluşturulurken bir hata oluştu: ' +
+					error.message,
+				'error'
+			)
 		} finally {
-			updateButtonState(false)
+			isGenerating = false
+			generateACButton.disabled = false
+			generateACButton.innerHTML =
+				'<span class="icon icon-generate"></span> Oluştur'
 		}
 	})
-
-	descriptionInput.addEventListener('keydown', (e) => {
-		if (e.key === 'Enter' && e.ctrlKey && !isGenerating) {
-			e.preventDefault()
-			generateACButton.click()
-		}
-	})
-
-	const shortcutInfo = document.createElement('div')
-	shortcutInfo.style.fontSize = '12px'
-	shortcutInfo.style.color = 'var(--text-secondary)'
-	shortcutInfo.style.marginTop = '4px'
-	shortcutInfo.style.textAlign = 'right'
-	shortcutInfo.innerHTML =
-		'Kısayol: <kbd style="background:rgba(255,255,255,0.1);padding:2px 4px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);">Ctrl</kbd> + <kbd style="background:rgba(255,255,255,0.1);padding:2px 4px;border-radius:4px;border:1px solid rgba(255,255,255,0.2);">Enter</kbd>'
-	descriptionInput.parentNode.appendChild(shortcutInfo)
 
 	copyButton.addEventListener('click', async () => {
 		if (generatedAC) {
 			try {
 				await navigator.clipboard.writeText(generatedAC)
-
-				// Geçici olarak ikonu değiştir
-				const originalHTML = copyButton.innerHTML
-				copyButton.innerHTML =
-					'<span class="icon icon-check"></span><span>Kopyalandı!</span>'
-				copyButton.style.color = 'var(--success-color)'
-
-				setTimeout(() => {
-					copyButton.innerHTML = originalHTML
-					copyButton.style.color = ''
-				}, 2000)
-
-				showStatus('İçerik panoya kopyalandı!', 'success')
-			} catch (err) {
-				showStatus('Kopyalama işlemi başarısız oldu', 'error')
+				showStatus('Acceptance Criteria kopyalandı!', 'success')
+			} catch (error) {
+				console.error('Kopyalama hatası:', error)
+				showStatus('Kopyalama sırasında bir hata oluştu.', 'error')
 			}
 		}
 	})
+
+	function formatACText(text) {
+		return text
+			.replace(/\n/g, '<br>')
+			.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+			.replace(/\*(.*?)\*/g, '<em>$1</em>')
+			.replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>')
+			.replace(
+				/`(.*?)`/g,
+				'<code style="background-color:rgba(0,0,0,0.1);padding:2px 4px;border-radius:3px;">$1</code>'
+			)
+			.replace(
+				/^- (.*)/gm,
+				'<div style="display:flex;margin:4px 0;"><span style="color:var(--primary-color);margin-right:8px;">•</span><span>$1</span></div>'
+			)
+	}
 
 	const style = document.createElement('style')
 	style.textContent = `
