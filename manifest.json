@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "Azure DevOps Agent",
-	"version": "2.0",
+	"version": "3.0",
 	"description": "Azure DevOps kartlarından Acceptance Criteria oluşturan modern extension.",
 	"permissions": ["storage"],
 	"host_permissions": [
@@ -12,16 +12,16 @@
 		"extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
 	},
 	"icons": {
-		"16": "images/icon16.png",
-		"48": "images/icon48.png",
-		"128": "images/icon128.png"
+		"16": "./images/icon16.png",
+		"48": "./images/icon48.png",
+		"128": "./images/icon128.png"
 	},
 	"action": {
 		"default_popup": "popup.html",
 		"default_icon": {
-			"16": "images/icon16.png",
-			"48": "images/icon48.png",
-			"128": "images/icon128.png"
+			"16": "./images/icon16.png",
+			"48": "./images/icon48.png",
+			"128": "./images/icon128.png"
 		}
 	},
 	"author": "Berkay Derin",
