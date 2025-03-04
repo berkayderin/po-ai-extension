@@ -20,6 +20,9 @@ Açıklama: {description}`
 	let generatedAC = null
 	let isGenerating = false
 
+	// Prompt Template textarea'sının içeriğini temizle, sadece placeholder görünsün
+	promptTemplateInput.value = ''
+
 	tabs.forEach((tab) => {
 		tab.addEventListener('click', () => {
 			tabs.forEach((t) => t.classList.remove('active'))
@@ -42,11 +45,6 @@ Açıklama: {description}`
 		])
 		if (data.geminiApiKey) {
 			apiKeyInput.value = data.geminiApiKey
-		}
-		if (data.promptTemplate) {
-			promptTemplateInput.value = data.promptTemplate
-		} else {
-			promptTemplateInput.value = DEFAULT_PROMPT_TEMPLATE
 		}
 	} catch (error) {
 		console.error('Ayarlar yüklenirken hata:', error)
